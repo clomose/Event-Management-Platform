@@ -1,0 +1,118 @@
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import { User } from "../models/user.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { EventAttendees } from "../models/eventAttendees.model.js";
+import { Event } from "../models/event.model.js";
+
+const AccessToken = async (userId) => {
+
+    const user = await User.findById(userId);
+    const accessToken = user.generateAccessToken();
+    return {accessToken};
+
+}    
+
+const registerUser = asyncHandler(async (req, res) => {
+    const {name, email, password} = req.body;
+
+    //validation
+    if([name, email, password].some((field) => field?.trim() === "")){
+        throw new ApiError(400, "All fields are required");
+    }
+
+    const existedUser = await User.findOne({email});
+    if(existedUser){
+        throw new ApiError(400, "User already exists with this email");
+    }
+
+    const user = await User.create({name, email, password});
+
+    const createdUser = await User.findById(user._id).select("-password");
+
+    if(!createdUser){
+        throw new ApiError(500, "Failed to create user");
+    }
+
+    res.status(201).json(
+        new ApiResponse(201, "User registered successfully", createdUser)
+    );
+
+});
+
+const loginUser = asyncHandler(async (req, res) => {
+    const {email, password} = req.body;
+
+    //validation
+    if([email, password].some((field) => field?.trim() === "")){
+        throw new ApiError(400, "All fields are required");
+    }
+
+    const user = await User.findOne({email});
+
+    if(!user){
+        throw new ApiError(400, "User not found");
+    }
+
+    const isPasswordCorrect = await user.isPasswordMatched(password);
+
+    if(!isPasswordCorrect){
+        throw new ApiError(400, "Invalid password");
+    }
+
+    const {accessToken} = await AccessToken(user._id);
+
+    const loggedInUser = await User.findById(user._id).select("-password");
+
+    const options = {
+        httpOnly : true,
+        secure : true,
+        maxAge : 24 * 60 * 60 * 1000,
+    }
+
+    return res.status(200)
+    .cookie("accessToken", accessToken, options)
+    .json(
+        new ApiResponse(200, "User logged in successfully", {user : loggedInUser, accessToken})
+    );
+
+});
+
+const getCurrentUser = asyncHandler(async(req,res) => {
+    return res.status(200).json(
+        new ApiResponse(200,req.user,"Current User Details")
+    )
+})
+
+const registerUserToEvent = asyncHandler(async(req,res) => {
+    const {eventId} = req.params;
+    const userId = req.user._id;
+
+    const event = await Event.findById(eventId);
+    if(!event){
+        throw new ApiError(400, "Event not found");
+    }
+
+    const isUserAlreadyRegistered = await EventAttendees.findOne({eventId, userId});
+    if(isUserAlreadyRegistered){
+        throw new ApiError(400, "User already registered to this event");
+    }
+
+    const eventAttendees = await EventAttendees.create({eventId, userId});
+    const updatedEvent = await Event.findByIdAndUpdate(eventId, {$inc : {attendees : 1}}, {new : true});
+
+    if(!updatedEvent){
+        throw new ApiError(500, "Failed to update event");
+    }
+
+    if(!eventAttendees){
+        throw new ApiError(500, "Failed to register user to event");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, "User registered to event successfully", eventAttendees)
+    )
+})
+
+
+export {registerUser, loginUser, getCurrentUser, registerUserToEvent};
