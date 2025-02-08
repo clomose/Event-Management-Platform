@@ -5,7 +5,7 @@ const HeroSection = () => {
     <div className='w-full min-h-[60vh] bg-gray-100 flex flex-col items-center justify-center gap-6 py-16 px-4'>
       {/* Hero Content */}
       <div className='max-w-4xl text-center space-y-4'>
-        <h1 className='text-5xl md:text-6xl font-bold text-gray-800 leading-tight'>
+        <h1 className='text-5xl md:text-6xl font-bold text-gray-800'>
           Discover Exciting Events
         </h1>
         <p className='text-xl md:text-2xl font-semibold text-gray-600 mb-8'>
@@ -14,9 +14,7 @@ const HeroSection = () => {
         
         {/* CTA Buttons */}
         <div className='flex flex-col sm:flex-row gap-4 justify-center mt-8'>
-          <button className='px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors'>
-            Browse Events
-          </button>
+          
           <button className='px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg border-2 border-blue-600 hover:bg-blue-50 transition-colors'>
             Create Event
           </button>
