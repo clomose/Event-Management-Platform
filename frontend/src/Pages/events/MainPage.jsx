@@ -8,7 +8,9 @@ const MainPage = () => {
     <>
         <HeroSection />
         <div className='flex w-full h-auto p-6 bg-white rounded-xl shadow-lg space-x-8'>
-            <EventFilters />
+            <div className='w-[50%] sticky top-0'>
+                <EventFilters />
+            </div>
             <div className='grid grid-cols-2 gap-4 w-full h-auto p-6 bg-white rounded-xl shadow-lg space-x-8'>
                 <EventCard />
                 <EventCard />
