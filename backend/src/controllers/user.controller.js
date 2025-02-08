@@ -114,5 +114,83 @@ const registerUserToEvent = asyncHandler(async(req,res) => {
     )
 })
 
+const getRegisteredEvents = asyncHandler(async(req,res) => {
+    const userId = req.user._id;
 
-export {registerUser, loginUser, getCurrentUser, registerUserToEvent};
+    if(!userId){
+        throw new ApiError(400, "User not found");
+    }
+
+    const registeredEvents = await User.aggregate([
+        {
+            $match : {_id : new mongoose.Types.ObjectId.createFromHexString(userId)}
+        },
+        {
+            $lookup : {
+                from : "eventAttendees",
+                localField : "_id",
+                foreignField : "userId",
+                as : "RegisteredEvents"
+            }
+        },
+        {
+            $unwind : "$RegisteredEvents"
+        },
+        {
+            $lookup : {
+                from : "events",
+                localField : "RegisteredEvents.eventId",
+                foreignField : "_id",
+                as : "EventDetails"
+            }
+        }
+    ])
+
+    if(!registeredEvents?.length){
+        throw new ApiError(400, "No events found");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, "Registered Events", registeredEvents)
+    )
+})
+
+const getUserEvents = asyncHandler(async(req,res) => {
+    const userId = req.user._id;
+
+    const events = await Event.find({userId});
+
+    if(!events?.length){
+        throw new ApiError(400, "No events found");
+    }
+
+    const userEvents = await User.aggregate([
+        {
+            $match : {_id : new mongoose.Types.ObjectId.createFromHexString(userId)}
+        },
+        {
+            $lookup : {
+                from : "events",
+                localField : "_id",
+                foreignField : "userId",
+                as : "UserEvents"
+            }
+        }
+    ])
+
+    if(!userEvents?.length){
+        throw new ApiError(400, "No events found");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, "User Events", userEvents)
+    )
+})
+
+export {registerUser, 
+    loginUser, 
+    getCurrentUser, 
+    registerUserToEvent, 
+    getRegisteredEvents, 
+    getUserEvents
+};
