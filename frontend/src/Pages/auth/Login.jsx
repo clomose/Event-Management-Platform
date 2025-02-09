@@ -1,8 +1,28 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { User, Mail, Lock } from 'lucide-react'
+import { useState} from 'react';
+import axios from 'axios';
 
 const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+
+    const handleSubmit = async  (e) => {
+        e.preventDefault();
+        const response = await axios.post('http://localhost:8000/api/v1/user/login', {
+            email,
+            password
+        }, {withCredentials : true})
+        if(response.status === 200){
+            console.log(response.data);
+            navigate('/');
+        }else{
+            alert('Login failed');
+        }
+    }
+
   return (
     <div className='flex justify-center items-center min-h-screen w-full bg-gradient-to-br from-slate-50 to-indigo-100'>
       <div className='bg-white/90 backdrop-blur-sm p-10 rounded-2xl shadow-xl w-full max-w-md mx-4 transform transition duration-300 hover:shadow-2xl'>
@@ -13,7 +33,7 @@ const Login = () => {
         </div>
         
         {/* Login Form */}
-        <form className='space-y-7'>
+        <form className='space-y-7' onSubmit={handleSubmit}>
           <div className='space-y-5'>
             {/* Email Input */}
             <div className='relative'>
@@ -24,6 +44,7 @@ const Login = () => {
                 id='email'
                 name='email' 
                 className='border-2 border-gray-200 rounded-xl p-4 pl-12 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300 bg-white/50'
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             {/* Password Input */}
@@ -35,6 +56,7 @@ const Login = () => {
                 id='password'
                 name='password' 
                 className='border-2 border-gray-200 rounded-xl p-4 pl-12 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300 bg-white/50'
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>

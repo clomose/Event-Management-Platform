@@ -15,14 +15,13 @@ const AccessToken = async (userId) => {
 
 const registerUser = asyncHandler(async (req, res) => {
     const {name, email, password} = req.body;
-
     //validation
     if([name, email, password].some((field) => field?.trim() === "")){
         throw new ApiError(400, "All fields are required");
     }
 
-    const existedUser = await User.findOne({email});
-    if(existedUser){
+    const existedUser = await User.find({email});
+    if(existedUser?.length > 0){
         throw new ApiError(400, "User already exists with this email");
     }
 
@@ -66,12 +65,12 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly : true,
-        secure : true,
         maxAge : 24 * 60 * 60 * 1000,
+        withCredentials : true,
     }
 
     return res.status(200)
-    .cookie("accessToken", accessToken, options)
+    .cookie("access_token", accessToken, options)
     .json(
         new ApiResponse(200, "User logged in successfully", {user : loggedInUser, accessToken})
     );

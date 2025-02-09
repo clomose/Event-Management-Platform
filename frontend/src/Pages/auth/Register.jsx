@@ -1,8 +1,37 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { User, Mail, Lock } from 'lucide-react'
+import axios from 'axios';
 
 const Register = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await axios.post('http://localhost:8000/api/v1/user/register', user);
+      console.log(response);
+      if(response.status === 201){
+        navigate('/login');
+      }else{
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className='flex justify-center items-center min-h-screen w-full bg-gradient-to-br from-slate-50 to-indigo-100'>
       <div className='bg-white/90 backdrop-blur-sm p-10 rounded-2xl shadow-xl w-full max-w-md mx-4 transform transition duration-300 hover:shadow-2xl'>
@@ -20,6 +49,9 @@ const Register = () => {
                 type='text' 
                 id='name' 
                 className='border-2 border-gray-200 rounded-xl p-4 pl-12 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300 bg-white/50'
+                name='name'
+                value={user.name}
+                onChange={handleChange}
               />
             </div>
             <div className='relative'>
@@ -29,6 +61,9 @@ const Register = () => {
                 type='email' 
                 id='email' 
                 className='border-2 border-gray-200 rounded-xl p-4 pl-12 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300 bg-white/50'
+                name='email'
+                value={user.email}
+                onChange={handleChange}
               />
             </div>
             <div className='relative'>
@@ -38,6 +73,9 @@ const Register = () => {
                 type='password' 
                 id='password' 
                 className='border-2 border-gray-200 rounded-xl p-4 pl-12 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300 bg-white/50'
+                name='password'
+                value={user.password}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -45,6 +83,7 @@ const Register = () => {
           <button 
             type='submit' 
             className='bg-indigo-600 text-white rounded-xl p-4 w-full font-semibold transform transition-all duration-300 hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-indigo-500/30'
+            onClick={handleSubmit}
           >
             Create Account
           </button>

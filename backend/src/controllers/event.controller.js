@@ -6,13 +6,14 @@ import { Event } from "../models/event.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const createEvent = asyncHandler(async(req,res) => {
-    const {title, description, location, date, time, image, isPaid} = req.body;
+    console.log(req.body);
+    const {title, description, category, date, time} = req.body;
     const userId = req.user._id;
     if(!userId){
         throw new ApiError(400, "User not found");
     }
 
-    const imageUrl = req.files?.path;
+    const imageUrl = req.file?.path;
 
     if(!imageUrl){
         throw new ApiError(400, "Image not found");
@@ -20,7 +21,7 @@ const createEvent = asyncHandler(async(req,res) => {
 
     const eventImage = await uploadOnCloudinary(imageUrl);
 
-    const event = await Event.create({title, description, location, date, time, image: eventImage.secure_url, isPaid, createdBy : userId});
+    const event = await Event.create({title, description, category, date, time, image: eventImage.secure_url, createdBy : userId});
 
     if(!event){
         throw new ApiError(400, "Event not created");
@@ -34,7 +35,7 @@ const createEvent = asyncHandler(async(req,res) => {
     return res.status(200).json(new ApiResponse(200, "Event created successfully", event));
 })
 
-const getEvents = asyncHandler(async(_,res) => {
+const getEvents = asyncHandler(async(req,res) => {
     const events = await Event.find({});
     if(!events){
         throw new ApiError(400, "Events not found");
@@ -63,7 +64,7 @@ const updateEvent = asyncHandler(async(req,res) => {
 
 const updateEventImage = asyncHandler(async(req,res) => {
     const {id} = req.params;
-    const imageUrl = req.files?.path;
+    const imageUrl = req.file?.path;
     if(!imageUrl){
         throw new ApiError(400, "Image not found");
     }

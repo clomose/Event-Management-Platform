@@ -12,7 +12,7 @@ const eventSchema = new mongoose.Schema({
     image: {
         type: String,
     },
-    location: {
+    category: {
         type: String,
         required: true,
     },
@@ -20,17 +20,9 @@ const eventSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
-    time: {
-        type: String,
-        required: true,
-    },
     attendees: {
         type: Number,
         default: 0,
-    },
-    isPaid: {
-        type: Boolean,
-        default: false,
     },
     impressions: {
         type: Number,
