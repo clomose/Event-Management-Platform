@@ -8,7 +8,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/current-user", verifyUser, getCurrentUser);
 router.get("/registered-events", verifyUser, getRegisteredEvents);
-router.post("/register-to-event", verifyUser, registerUserToEvent);
+router.post("/register-to-event/:id", verifyUser, registerUserToEvent);
 router.get("/user-events", verifyUser, getUserEvents);
 
 export {router};

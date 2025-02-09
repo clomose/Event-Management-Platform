@@ -35,17 +35,23 @@ const createEvent = asyncHandler(async(req,res) => {
     return res.status(200).json(new ApiResponse(200, "Event created successfully", event));
 })
 
-const getEvents = asyncHandler(async(req,res) => {
-    const events = await Event.find({});
-    if(!events){
-        throw new ApiError(400, "Events not found");
+const getEvents = asyncHandler(async (req, res) => {
+    console.log("Fetching events");
+    const events = await Event.find({}).populate("createdBy", "name");
+
+    if (!events.length) {
+        throw new ApiError(404, "No events found");
     }
-    return res.status(200).json(new ApiResponse(200, "Events fetched successfully", events));
-})
+
+    return res.status(200).json(
+        new ApiResponse(200, "Events fetched successfully", events)
+    );
+});
+
 
 const getEventById = asyncHandler(async(req,res) => {
     const {id} = req.params;
-    const event = await Event.findById(id);
+    const event = await Event.findById(id).populate("createdBy", "name");
     if(!event){
         throw new ApiError(400, "Event not found");
     }

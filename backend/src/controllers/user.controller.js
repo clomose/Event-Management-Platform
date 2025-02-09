@@ -84,21 +84,25 @@ const getCurrentUser = asyncHandler(async(req,res) => {
 })
 
 const registerUserToEvent = asyncHandler(async(req,res) => {
-    const {eventId} = req.params;
+    const {id} = req.params;
+    console.log("eventId",id);
     const userId = req.user._id;
+    console.log("userId",userId);
 
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(id);
     if(!event){
         throw new ApiError(400, "Event not found");
     }
 
-    const isUserAlreadyRegistered = await EventAttendees.findOne({eventId, userId});
+    console.log(event);
+
+    const isUserAlreadyRegistered = await EventAttendees.findOne({eventId : id, userId});
     if(isUserAlreadyRegistered){
         throw new ApiError(400, "User already registered to this event");
     }
 
-    const eventAttendees = await EventAttendees.create({eventId, userId});
-    const updatedEvent = await Event.findByIdAndUpdate(eventId, {$inc : {attendees : 1}}, {new : true});
+    const eventAttendees = await EventAttendees.create({eventId : id, userId});
+    const updatedEvent = await Event.findByIdAndUpdate(id, {$inc : {attendees : 1}}, {new : true});
 
     if(!updatedEvent){
         throw new ApiError(500, "Failed to update event");

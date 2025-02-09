@@ -11,6 +11,7 @@ export const verifyUser = asyncHandler(async (req,_,next) => {
     //next
     try {
         const token = req.cookies?.access_token || req.header("Authorization")?.replace("Bearer ","");
+        console.log("token",token);
         if(!token){
             throw new ApiError(401,"Unauthorized Access")
         }
@@ -24,8 +25,8 @@ export const verifyUser = asyncHandler(async (req,_,next) => {
         }
 
         req.user = user;
+        console.log(req.user);
         next();
-        
     } catch (error) {
         throw new ApiError(401,error?.message || "Inavalid Token")
     }

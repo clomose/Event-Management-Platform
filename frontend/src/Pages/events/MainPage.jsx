@@ -9,8 +9,15 @@ const MainPage = () => {
 
     useEffect(() => {
         const fetchEvents = async () => {
-            const response = await axios.get('http://localhost:8000/api/v1/event/events');
-            setEvents(response.data);
+            try{
+                // console.log("Fetching events");
+                const response = await axios.get('http://localhost:8000/api/v1/event/events', {withCredentials : true});
+                setEvents(response.data.data);
+                console.log(response.data.data);
+            }
+            catch(error){
+                console.log(error);
+            }
         }
         fetchEvents();
     }, [])
@@ -26,7 +33,7 @@ const MainPage = () => {
             <div className='grid grid-cols-2 gap-4 w-full h-auto p-6 bg-white rounded-xl shadow-lg space-x-8'>
                 {
                     events.length > 0 ? events.map((event) => (
-                        <EventCard event={event} />
+                        <EventCard event={event} key={event._id} />
                     )) : <p>No events found</p>
                 }
 
