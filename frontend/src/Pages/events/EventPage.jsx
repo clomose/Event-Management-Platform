@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Users, Eye, Calendar, CheckCircle} from 'lucide-react'
+import {Users, Eye, Calendar, CheckCircle,} from 'lucide-react'
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -20,6 +20,16 @@ const EventPage = () => {
         }
     }
 
+    const incrementImpressions = async () => {
+        try {
+            await axios.post(`http://localhost:8000/api/v1/event/increment-impression/${id}`, {}, 
+                {withCredentials: true}
+            );
+        } catch (error) {
+            console.error("Error incrementing impressions:", error);
+        }
+    };
+
     useEffect(() => {
         const fetchEvent = async () => {
             const response = await axios.get(`http://localhost:8000/api/v1/event/event/${id}`, {withCredentials : true});
@@ -27,6 +37,8 @@ const EventPage = () => {
             console.log(response.data.data);
         }
         fetchEvent();
+        incrementImpressions();
+        
     }, [])
   return (
     <div className='flex flex-col items-center min-h-screen bg-gray-50 py-10 w-full space-y-8'>
@@ -38,7 +50,9 @@ const EventPage = () => {
         <div className='flex justify-center w-[80%] h-full p-6 bg-white rounded-xl shadow-lg space-x-8'>
             <div className='flex flex-col items-start justify-start w-[60%] h-full p-8 space-y-8'>
                 <div className='space-y-3'>
-                    <h1 className='text-4xl font-bold text-gray-900'>{event?.title}</h1>
+                    <div className='flex items-center justify-between w-full'>
+                        <h1 className='text-4xl font-bold text-gray-900'>{event?.title}</h1>
+                    </div>
                     <p className='text-lg text-gray-600 flex items-center'>
                         <span className='mr-2'>Hosted by</span>
                         <span className='font-semibold text-blue-600'>{event?.createdBy?.name}</span>
@@ -52,18 +66,6 @@ const EventPage = () => {
                     </p>
                 </div>
 
-                {/* <div className='space-y-4'>
-                    <h2 className='text-2xl font-semibold text-gray-800'>What to expect</h2>
-                    <ul className='space-y-3 text-gray-600'>
-                        {event?.expectations.map((item, index) => (
-                            <li key={index} className='flex items-center'>
-                                <span className='h-2 w-2 bg-blue-500 rounded-full mr-3'></span>
-                                {item}
-                            </li>
-                        ))}
-                    </ul>
-                </div> */}
-
                 <div className='pt-6'>
                     <button className='bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5' onClick={handleRegister}>
                         {isLoading ? "Registering..." : "Register Now"}
@@ -73,9 +75,12 @@ const EventPage = () => {
             </div>
             
             <div className='flex flex-col w-[40%] h-fit bg-white rounded-xl p-6 space-y-6 border border-gray-100'>
-                <div className='flex items-center justify-between'>
-                    <h2 className='text-2xl font-bold text-gray-900'>Event Details</h2>
-                    <span className='px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold'>Paid</span>
+                <div className='flex flex-col space-y-3'>
+                    <div className='flex items-center justify-between'>
+                        <h2 className='text-2xl font-bold text-gray-900'>Event Details</h2>
+                        <span className='px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold'>{new Date(event?.date) > new Date() ? "Upcoming" : "Past"}</span>
+                    </div>
+                    <div className='px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold w-fit'>{event?.category}</div>
                 </div>
                 
                 <div className='space-y-4'>

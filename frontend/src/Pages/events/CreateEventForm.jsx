@@ -17,6 +17,7 @@ const CreateEventForm = () => {
         formData.append("category", e.target.category.value);
         formData.append("date", e.target.date.value);
         formData.append("time", e.target.time.value);
+        formData.append("shortDescription", e.target.shortDescription.value);
         formData.append("image", image);
         axios.post('http://localhost:8000/api/v1/event/create', formData, {
             headers : {
@@ -42,6 +43,10 @@ const CreateEventForm = () => {
                 <div className='w-full mb-4'>
                     <label htmlFor='title' className='block text-gray-600 font-medium mb-2'>Event Title</label>
                     <input type='text' id='title' name='title' className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300' />
+                </div>
+                <div className='w-full mb-4'>
+                    <label htmlFor='shortDescription' className='block text-gray-600 font-medium mb-2'>Event Short Description</label>
+                    <input type='text' id='shortDescription' name='shortDescription' className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300' />
                 </div>
                 <div className='w-full mb-4'>
                     <label htmlFor='description' className='block text-gray-600 font-medium mb-2'>Event Description</label>

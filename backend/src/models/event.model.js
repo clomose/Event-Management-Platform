@@ -9,10 +9,18 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    shortDescription: {
+        type: String,
+        required: true,
+    },
     image: {
         type: String,
     },
     category: {
+        type: String,
+        required: true,
+    },
+    time: {
         type: String,
         required: true,
     },
@@ -36,7 +44,7 @@ const eventSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-    }
+    },
 },{timestamps: true})
 
 const Event = mongoose.model('Event', eventSchema);

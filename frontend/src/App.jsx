@@ -16,6 +16,8 @@ import MainPage from './Pages/events/MainPage'
 import EventDashboard from './Pages/dashboard/EventDashboard'
 import DashBoardSidebar from './Pages/dashboard/DashBoardSidebar'
 import MyEvent from './Pages/dashboard/MyEvent'
+import RegisteredEvents from './Pages/dashboard/RegisteredEvents'
+import EditEvent from './Pages/dashboard/EditEvent'
 function App() {
 
   return (
@@ -33,6 +35,8 @@ function App() {
         <Route path="/dashboard" element={<EventDashboard />} />
         <Route path="/dashboard/sidebar" element={<DashBoardSidebar />} />
         <Route path="/dashboard/my-events" element={<MyEvent />} />
+        <Route path="/dashboard/registered-events" element={<RegisteredEvents />} />
+        <Route path="/events/edit/:id" element={<EditEvent />} />
       </Routes>
     </>
   )

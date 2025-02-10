@@ -51,6 +51,7 @@ const getEvents = asyncHandler(async (req, res) => {
 
 const getEventById = asyncHandler(async(req,res) => {
     const {id} = req.params;
+    console.log(id);
     const event = await Event.findById(id).populate("createdBy", "name");
     if(!event){
         throw new ApiError(400, "Event not found");
@@ -60,10 +61,15 @@ const getEventById = asyncHandler(async(req,res) => {
 
 const updateEvent = asyncHandler(async(req,res) => {
     const {id} = req.params;
-    const {title, description, location, date, time, image, isPaid} = req.body;
-    const event = await Event.findByIdAndUpdate(id, {title, description, location, date, time, image, isPaid}, {new : true});
-    if(!event){
-        throw new ApiError(400, "Event not found");
+    const {title, description, category, date, time, shortDescription} = req.body;
+    const imageUrl = req.file?.path;
+    let event;
+    if(imageUrl){
+        const eventImage = await uploadOnCloudinary(imageUrl);
+        event = await Event.findByIdAndUpdate(id, {title, description, category, date, time, shortDescription, image : eventImage.secure_url}, {new : true});
+    }
+    else{
+        event = await Event.findByIdAndUpdate(id, {title, description, category, date, time, shortDescription}, {new : true});
     }
     return res.status(200).json(new ApiResponse(200, "Event updated successfully", event));
 })
@@ -101,9 +107,10 @@ const getEventsByUser = asyncHandler(async(req,res) => {
 })
 
 const filterEvents = asyncHandler(async(req,res) => {
-    const {search, title, location, upcoming, past, isPaid} = req.body;
-    
+    const {search, eventType, timeFilter} = req.body;
+    console.log(req.body);
     const pipeline = [];
+
 
     // Match stage for text search across title and location
     if (search) {
@@ -111,46 +118,33 @@ const filterEvents = asyncHandler(async(req,res) => {
             $match: {
                 $or: [
                     { title: { $regex: search, $options: "i" } },
-                    { location: { $regex: search, $options: "i" } }
+                    { category: { $regex: search, $options: "i" } },
                 ]
             }
         });
     }
 
     // Match specific title if provided
-    if (title) {
+    if (eventType) {
         pipeline.push({
-            $match: { title: { $regex: title, $options: "i" } }
-        });
-    }
-
-    // Match specific location if provided  
-    if (location) {
-        pipeline.push({
-            $match: { location: { $regex: location, $options: "i" } }
+            $match: { category: { $regex: eventType, $options: "i" } }
         });
     }
 
     // Filter for upcoming events
-    if (upcoming) {
+    if (timeFilter === "upcoming") {
         pipeline.push({
             $match: { date: { $gte: new Date() } }
         });
     }
 
     // Filter for past events
-    if (past) {
+    if (timeFilter === "past") {
         pipeline.push({
             $match: { date: { $lt: new Date() } }
         });
     }
 
-    // Match paid/free events
-    if (isPaid !== undefined) {
-        pipeline.push({
-            $match: { isPaid: isPaid }
-        });
-    }
 
     // Sort by date
     pipeline.push({
@@ -158,10 +152,6 @@ const filterEvents = asyncHandler(async(req,res) => {
     });
 
     const events = await Event.aggregate(pipeline);
-
-    if(!events?.length){
-        throw new ApiError(404, "No events found matching the criteria");
-    }
 
     return res.status(200).json(
         new ApiResponse(200, "Events filtered successfully", events)
@@ -199,6 +189,14 @@ const registeredUsers = asyncHandler(async(req,res) => {
     return res.status(200).json(new ApiResponse(200, "Registered users fetched successfully", registeredUsers));
 })
 
+const incrementImpressions = asyncHandler(async(req,res) => {
+    const {id} = req.params;
+    const event = await Event.findByIdAndUpdate(id, {$inc : {impressions : 1}}, {new : true});
+    if(!event){
+        throw new ApiError(400, "Event not found");
+    }
+    return res.status(200).json(new ApiResponse(200, "Impressions incremented successfully", event));
+})
 
 export {createEvent, 
     getEvents, 
@@ -208,5 +206,6 @@ export {createEvent,
     deleteEvent, 
     getEventsByUser, 
     filterEvents,
-    registeredUsers
+    registeredUsers,
+    incrementImpressions
 };

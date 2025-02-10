@@ -12,7 +12,7 @@ export const EventCard = ({event}) => {
       {/* Event Image */}
       <div className='relative w-full h-48'>
         <img 
-          src="https://images.unsplash.com/photo-1738467990752-6e00e436919d?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+          src={event.image} 
           alt="Event" 
           className='w-full h-full object-cover'
         />
@@ -20,10 +20,13 @@ export const EventCard = ({event}) => {
 
       {/* Event Details */}
       <div className='p-4 space-y-3'>
-        <h2 className='text-xl font-bold text-gray-800'>{event.title}</h2>
+        <div className='flex items-center justify-between'>
+          <h2 className='text-xl font-bold text-gray-800'>{event.title}</h2>
+          <span className='px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold'>{new Date(event?.date) > new Date() ? "Upcoming" : "Past"}</span>
+        </div>
         
         <p className='text-sm text-gray-600 line-clamp-2'>
-          {event.description}
+          {event.shortDescription}
         </p>
         
         <div className='space-y-1.5'>

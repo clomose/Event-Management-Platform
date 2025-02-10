@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Edit } from 'lucide-react' // Import edit icon
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-
-const MyEvent = () => {
-  const navigate = useNavigate();
-
+import { Edit } from 'lucide-react';
+const RegisteredEvents = () => {
     const [events, setEvents] = useState([]);
 
     useEffect(() => {
-        axios.get(`http://localhost:8000/api/v1/user/user-events`, {withCredentials : true})
+        axios.get(`http://localhost:8000/api/v1/user/registered-events`, {withCredentials : true})
         .then(response => {
-            setEvents(response.data.data[0].UserEvents);
-            console.log(response.data.data[0]);
+            setEvents(response.data.data[0].EventDetails);
+            console.log(response.data.data[0].EventDetails);
         })
         .catch(error => {
             console.error('Error fetching events:', error);
@@ -37,7 +33,7 @@ const MyEvent = () => {
               </tr>
             </thead>
             <tbody>
-              { events.length > 0 && events.map((event) => (
+              { events && events.map((event) => (
                 <tr 
                   key={event._id} 
                   className="border-b border-gray-100 transition-colors hover:bg-gray-50"
@@ -61,9 +57,7 @@ const MyEvent = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <button className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-full transition-colors" onClick={() => {
-                      navigate(`/events/edit/${event._id}`);
-                    }}>
+                    <button className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-full transition-colors">
                       <Edit size={18} />
                     </button>
                   </td>
@@ -77,4 +71,4 @@ const MyEvent = () => {
   )
 }
 
-export default MyEvent
+export default RegisteredEvents

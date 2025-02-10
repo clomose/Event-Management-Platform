@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { EventAttendees } from "../models/eventAttendees.model.js";
 import { Event } from "../models/event.model.js";
+import mongoose from "mongoose";
 
 const AccessToken = async (userId) => {
 
@@ -123,14 +124,13 @@ const getRegisteredEvents = asyncHandler(async(req,res) => {
     if(!userId){
         throw new ApiError(400, "User not found");
     }
-
     const registeredEvents = await User.aggregate([
         {
-            $match : {_id : new mongoose.Types.ObjectId.createFromHexString(userId)}
+            $match : {_id : new mongoose.Types.ObjectId(userId)}
         },
         {
             $lookup : {
-                from : "eventAttendees",
+                from : "eventattendees",
                 localField : "_id",
                 foreignField : "userId",
                 as : "RegisteredEvents"
@@ -149,9 +149,9 @@ const getRegisteredEvents = asyncHandler(async(req,res) => {
         }
     ])
 
-    if(!registeredEvents?.length){
-        throw new ApiError(400, "No events found");
-    }
+    // if(!registeredEvents?.length){
+    //     throw new ApiError(400, "No events found");
+    // }
 
     return res.status(200).json(
         new ApiResponse(200, "Registered Events", registeredEvents)
@@ -161,21 +161,21 @@ const getRegisteredEvents = asyncHandler(async(req,res) => {
 const getUserEvents = asyncHandler(async(req,res) => {
     const userId = req.user._id;
 
-    const events = await Event.find({userId});
+    // const events = await Event.find({userId});
 
-    if(!events?.length){
-        throw new ApiError(400, "No events found");
-    }
+    // if(!events?.length){
+    //     throw new ApiError(400, "No events found");
+    // }
 
     const userEvents = await User.aggregate([
         {
-            $match : {_id : new mongoose.Types.ObjectId.createFromHexString(userId)}
+            $match : {_id : new mongoose.Types.ObjectId(userId)}
         },
         {
             $lookup : {
                 from : "events",
                 localField : "_id",
-                foreignField : "userId",
+                foreignField : "createdBy",
                 as : "UserEvents"
             }
         }

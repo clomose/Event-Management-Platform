@@ -20,7 +20,7 @@ const DashBoardSidebar = () => {
                 <span className='font-medium'>Registered Events</span>
             </Link>
 
-            <Link to="/dashboard/create-event" className='flex items-center w-full px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200'>
+            <Link to="/events/create" className='flex items-center w-full px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200'>
                 <Plus className='w-5 h-5 text-blue-600 mr-3' />
                 <span className='font-medium'>Create Event</span>
             </Link>
