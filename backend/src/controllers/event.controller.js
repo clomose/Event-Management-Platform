@@ -145,10 +145,24 @@ const filterEvents = asyncHandler(async(req,res) => {
         });
     }
 
-
     // Sort by date
     pipeline.push({
         $sort: { date: 1 }
+    });
+
+    // Lookup createdBy user details
+    pipeline.push({
+        $lookup: {
+            from: "users",
+            localField: "createdBy",
+            foreignField: "_id",
+            as: "createdBy"
+        }
+    });
+
+    // Unwind the createdBy array
+    pipeline.push({
+        $unwind: "$createdBy"
     });
 
     const events = await Event.aggregate(pipeline);

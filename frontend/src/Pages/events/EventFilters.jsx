@@ -1,9 +1,12 @@
 import React from 'react'
 import { Calendar, MapPin, Search, Tag, ChevronRight } from 'lucide-react'
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setFilteredData, applyFilters } from '../../redux/slices/filter';
 import axios from 'axios';
 
 const EventFilters = () => {
+  const dispatch = useDispatch()
   const eventTypes = ['music', 'sports', 'food', 'art', 'technology', 'other']
   const timeFilters = ['upcoming', 'past']
   const [search, setSearch] = useState('');
@@ -19,7 +22,16 @@ const EventFilters = () => {
     },
     {withCredentials : true}
     )
-    console.log(response.data);
+    dispatch(setFilteredData(response.data.data))
+    dispatch(applyFilters(true))
+  }
+  const handleClearFilters = () => {
+    dispatch(setFilteredData([]))
+    dispatch(applyFilters(false))
+    setSearch('')
+    setEventType('')
+    setTimeFilter('')
+
   }
   return (
     <div className='flex flex-col w-full h-auto bg-white rounded-xl p-6 space-y-8 border border-gray-100 shadow-lg sticky top-0'>
@@ -44,6 +56,7 @@ const EventFilters = () => {
                   type="checkbox"
                   className='w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                   onChange={(e) => setEventType(e.target.checked ? type : '')}
+                  checked={eventType === type}
                 />
                 <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity absolute -right-4" />
               </div>
@@ -69,6 +82,7 @@ const EventFilters = () => {
                   name="timeFilter"
                   className='w-5 h-5 border-gray-300 text-blue-600 focus:ring-blue-500'
                   onChange={(e) => setTimeFilter(e.target.checked ? filter : '')}
+                  checked={timeFilter === filter}
                 />
                 <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity absolute -right-4" />
               </div>
@@ -84,6 +98,7 @@ const EventFilters = () => {
       <button className='w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all transform hover:translate-y-[-1px] active:translate-y-[1px] font-medium shadow-md hover:shadow-lg' onClick={handleApplyFilters}>
         Apply Filters
       </button>
+      <button className='w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all transform hover:translate-y-[-1px] active:translate-y-[1px] font-medium shadow-md hover:shadow-lg' onClick={handleClearFilters}>Clear Filters</button>
     </div>
   )
 }
