@@ -15,7 +15,7 @@ const Login = () => {
     const dispatch = useDispatch();
     const handleSubmit = async  (e) => {
         e.preventDefault();
-        const response = await axios.post('http://localhost:8000/api/v1/user/login', {
+        const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/v1/user/login`, {
             email,
             password
         }, {withCredentials : true})

@@ -21,7 +21,7 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/user/register', user);
+      const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/v1/user/register`, user);
       console.log(response);
       if(response.status === 201){
         toast.success('Account created successfully');

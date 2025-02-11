@@ -15,7 +15,7 @@ const EventPage = () => {
     const handleRegister = async () => {
         console.log("Registering for event", id);
         setIsLoading(true);
-        const response = await axios.post(`http://localhost:8000/api/v1/user/register-to-event/${id}`,{}, {withCredentials : true});
+        const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/v1/user/register-to-event/${id}`,{}, {withCredentials : true});
         setIsLoading(false);
         if(response.status === 200){
             setIsRegistered(true);
@@ -24,7 +24,7 @@ const EventPage = () => {
 
     const incrementImpressions = async () => {
         try {
-            await axios.post(`http://localhost:8000/api/v1/event/increment-impression/${id}`, {}, 
+            await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/v1/event/increment-impression/${id}`, {}, 
                 {withCredentials: true}
             );
 
@@ -51,7 +51,7 @@ const EventPage = () => {
 
     useEffect(() => {
         const fetchIsRegistered = async () => {
-            const response = await axios.get(`http://localhost:8000/api/v1/event/event/is-registered/${id}`, {withCredentials : true});
+            const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/v1/event/event/is-registered/${id}`, {withCredentials : true});
             setIsRegistered(response.data.data);
         }
         fetchIsRegistered();
@@ -78,7 +78,7 @@ const EventPage = () => {
 
     useEffect(() => {
         const fetchEvent = async () => {
-            const response = await axios.get(`http://localhost:8000/api/v1/event/event/${id}`, {withCredentials : true});
+            const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/v1/event/event/${id}`, {withCredentials : true});
             setEvent(response.data.data);
             console.log(response.data.data);
         }

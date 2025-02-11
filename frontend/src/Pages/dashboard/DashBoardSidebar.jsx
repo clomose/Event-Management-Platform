@@ -7,7 +7,7 @@ import axios from 'axios'
 const DashBoardSidebar = () => {
     const navigate = useNavigate();
     const handleLogout = async () => {
-        const response = await axios.get("http://localhost:8000/api/v1/user/logout");
+        const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/v1/user/logout`);
         if(response.status === 200){
             navigate("/login");
         }

@@ -8,7 +8,7 @@ export const Navbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const handleLogout = async () => {
       console.log("Logging out")
-      const response = await axios.get("http://localhost:8000/api/v1/user/logout");
+      const response = await axios.get("${import.meta.env.VITE_SERVER_URL}/api/v1/user/logout");
       console.log("logout",response);
       if(response.status === 200){
           navigate("/login");
@@ -17,7 +17,7 @@ export const Navbar = () => {
 
   useEffect(() => {
     const checkLoggedIn = async () => {
-      const response = await axios.get("http://localhost:8000/api/v1/user/current-user", {withCredentials: true});
+      const response = await axios.get("${import.meta.env.VITE_SERVER_URL}/api/v1/user/current-user", {withCredentials: true});
       if(response.status === 200){
         setIsLoggedIn(true);
       }

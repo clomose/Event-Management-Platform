@@ -5,7 +5,7 @@ const RegisteredEvents = () => {
     const [events, setEvents] = useState([]);
 
     useEffect(() => {
-        axios.get(`http://localhost:8000/api/v1/user/registered-events`, {withCredentials : true})
+        axios.get(`${import.meta.env.VITE_SERVER_URL}/api/v1/user/registered-events`, {withCredentials : true})
         .then(response => {
             setEvents(response.data.data[0].EventDetails);
             console.log(response.data.data[0].EventDetails);

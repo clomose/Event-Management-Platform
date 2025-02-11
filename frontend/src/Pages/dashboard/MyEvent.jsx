@@ -9,7 +9,7 @@ const MyEvent = () => {
     const [events, setEvents] = useState([]);
 
     useEffect(() => {
-        axios.get(`http://localhost:8000/api/v1/user/user-events`, {withCredentials : true})
+        axios.get(`${import.meta.env.VITE_SERVER_URL}/api/v1/user/user-events`, {withCredentials : true})
         .then(response => {
             setEvents(response.data.data[0].UserEvents);
             console.log(response.data.data[0]);

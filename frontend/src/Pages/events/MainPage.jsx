@@ -18,7 +18,7 @@ const MainPage = () => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/v1/event/events', {withCredentials: true});
+                const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/v1/event/events`, {withCredentials: true});
                 setEvents(response.data.data);
                 console.log("response.data.data", response.data.data);
                 dispatch(setFilteredData([]));

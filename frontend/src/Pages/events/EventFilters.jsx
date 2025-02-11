@@ -16,7 +16,7 @@ const EventFilters = () => {
 
 
   const handleApplyFilters = async () => {
-    const response = await axios.post(`http://localhost:8000/api/v1/event/events/filter`, {
+    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/v1/event/events/filter`, {
       search,
       eventType,
       timeFilter,

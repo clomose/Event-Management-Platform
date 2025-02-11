@@ -8,7 +8,7 @@ export const SocketProvider = ({ children }) => {
 
     useEffect(() => {
         //connect to the server
-        const newSocket = io(import.meta.env.VITE_SERVER_URL || "http://localhost:8000",{
+        const newSocket = io(import.meta.env.VITE_SERVER_URL || "${import.meta.env.VITE_SERVER_URL}",{
             withCredentials: true,
             transports: ["websocket", "polling"],
         });

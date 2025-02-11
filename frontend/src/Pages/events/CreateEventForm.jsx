@@ -20,7 +20,7 @@ const CreateEventForm = () => {
         formData.append("time", e.target.time.value);
         formData.append("shortDescription", e.target.shortDescription.value);
         formData.append("image", image);
-        axios.post('http://localhost:8000/api/v1/event/create', formData, {
+        axios.post(`${import.meta.env.VITE_SERVER_URL}/api/v1/event/create`, formData, {
             headers : {
                 "Content-Type" : "multipart/form-data",
             },

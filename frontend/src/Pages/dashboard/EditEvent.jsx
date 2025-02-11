@@ -12,7 +12,7 @@ const EditEvent = () => {
     const [image, setImage] = useState(null);
 
     useEffect(() => {
-        axios.get(`http://localhost:8000/api/v1/event/event/${id}`, {withCredentials: true})
+        axios.get(`${import.meta.env.VITE_SERVER_URL}/api/v1/event/event/${id}`, {withCredentials: true})
         .then((response) => {
             setEvent(response.data.data);
             console.log(response.data.data);
@@ -40,7 +40,7 @@ const EditEvent = () => {
             formData.append("image", image);
         }
 
-        axios.put(`http://localhost:8000/api/v1/event/update-event/${id}`, formData, {
+        axios.put(`${import.meta.env.VITE_SERVER_URL}/api/v1/event/update-event/${id}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },

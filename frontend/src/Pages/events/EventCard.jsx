@@ -12,7 +12,7 @@ export const EventCard = ({event}) => {
   const [slotLeft, setSlotLeft] = useState(event.slotLeft);
   useEffect(() => {
     const fetchIsRegistered = async () => {
-      const response = await axios.get(`http://localhost:8000/api/v1/event/event/is-registered/${event._id}`, {withCredentials : true});
+      const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/v1/event/event/is-registered/${event._id}`, {withCredentials : true});
       setIsRegistered(response.data.data);
     }
     fetchIsRegistered();
