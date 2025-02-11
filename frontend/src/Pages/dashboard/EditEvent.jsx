@@ -2,6 +2,7 @@ import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const EditEvent = () => {
     const {id} = useParams();
@@ -46,6 +47,7 @@ const EditEvent = () => {
             withCredentials: true
         })
         .then(response => {
+            toast.success('Event updated successfully');
             console.log(response);
             navigate('/dashboard');
         })

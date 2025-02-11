@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setFilteredData, applyFilters } from '../../redux/slices/filter';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const EventFilters = () => {
   const dispatch = useDispatch()
@@ -24,6 +25,7 @@ const EventFilters = () => {
     )
     dispatch(setFilteredData(response.data.data))
     dispatch(applyFilters(true))
+    toast.success('Filters applied successfully')
   }
   const handleClearFilters = () => {
     dispatch(setFilteredData([]))

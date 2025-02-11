@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { User, Mail, Lock } from 'lucide-react'
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const Register = () => {
       const response = await axios.post('http://localhost:8000/api/v1/user/register', user);
       console.log(response);
       if(response.status === 201){
+        toast.success('Account created successfully');
         navigate('/login');
       }else{
         alert(response.data.message);

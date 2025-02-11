@@ -5,6 +5,7 @@ import { useState} from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setIsLoggedIn, setUser } from '../../redux/slices/filter';
+import toast from 'react-hot-toast';
 
 
 const Login = () => {
@@ -22,6 +23,7 @@ const Login = () => {
             console.log(response.data);
             dispatch(setIsLoggedIn(true));
             dispatch(setUser(response.data));
+            toast.success('Login successful');
             navigate('/');
         }else{
             alert('Login failed');
@@ -35,6 +37,7 @@ const Login = () => {
             email: 'guest@example.com',
             role: 'guest'
         }));
+        toast.success('Guest access granted');
         navigate('/');
     }
 

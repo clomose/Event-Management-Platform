@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState } from 'react';
 import axios from 'axios';  
+import toast from 'react-hot-toast';
 
 const CreateEventForm = () => {
     const [image, setImage] = useState(null);
@@ -26,6 +27,7 @@ const CreateEventForm = () => {
             withCredentials : true
         })
         .then(response => {
+            toast.success('Event created successfully');
             console.log(response);
         })  
         .catch(error => {

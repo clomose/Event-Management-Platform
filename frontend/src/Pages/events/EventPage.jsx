@@ -77,19 +77,6 @@ const EventPage = () => {
     }, [socket, id]);
 
     useEffect(() => {
-        if(!socket) return;
-        const handleEventSlotLeft = (data) => {
-            if(data.eventId === id){
-                setSlotLeft(data.slotLeft);
-            }
-        }
-        socket.on('event-slot-left', handleEventSlotLeft);
-        return () => {
-            socket.off('event-slot-left', handleEventSlotLeft);
-        }
-    }, [socket]);
-
-    useEffect(() => {
         const fetchEvent = async () => {
             const response = await axios.get(`http://localhost:8000/api/v1/event/event/${id}`, {withCredentials : true});
             setEvent(response.data.data);
@@ -163,13 +150,6 @@ const EventPage = () => {
                         </div>
                     </div>
 
-                    <div className='flex items-center p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-300 group cursor-pointer'>
-                        <Circle className='w-10 h-10 text-blue-600 group-hover:scale-110 transition-transform'/>
-                        <div className='ml-6'>
-                            <h3 className='text-sm font-medium text-gray-500'>Slot Left</h3>
-                            <p className='font-bold text-2xl text-gray-900'>{slotLeft}</p>
-                        </div>
-                    </div>
 
                     <div className='flex items-center p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-300 group cursor-pointer'>
                         <Eye className='w-10 h-10 text-blue-600 group-hover:scale-110 transition-transform'/>
