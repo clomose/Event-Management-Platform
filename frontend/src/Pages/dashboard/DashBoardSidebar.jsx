@@ -13,9 +13,9 @@ const DashBoardSidebar = () => {
         }
     }
   return (
-    <div className='flex flex-col w-1/4 p-8 mt-8 bg-white rounded-2xl space-y-6 border border-gray-100 shadow-xl'>
+    <div className='flex flex-col w-full md:w-1/4 p-4 sm:p-8 mt-8 bg-white rounded-2xl space-y-6 border border-gray-100 shadow-xl'>
         <div className='w-full mb-8'>
-            <h1 className='text-3xl font-bold text-gray-900 text-center'>Event Dashboard</h1>
+            <h1 className='text-2xl sm:text-3xl font-bold text-gray-900 text-center'>Event Dashboard</h1>
         </div>
         
         <nav className='space-y-4'>
@@ -38,8 +38,6 @@ const DashBoardSidebar = () => {
         <div className='flex-grow'></div>
 
         <div className='space-y-4 border-t pt-6'>
-            
-
             <div onClick={handleLogout} className='flex items-center w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200'>
                 <LogOut className='w-5 h-5 mr-3' />
                 <span className='font-medium'>Logout</span>

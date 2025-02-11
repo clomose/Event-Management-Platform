@@ -6,7 +6,7 @@ const EventDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className='container mx-auto'>
-        <div className='flex gap-6 p-4 md:p-8'>
+        <div className='flex flex-col md:flex-row gap-6 p-4 md:p-8'>
           <DashBoardSidebar />
           <div className='flex-1 min-h-[calc(100vh-4rem)]'>
             <Outlet />

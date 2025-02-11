@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 import { setIsLoggedIn, setUser } from '../../redux/slices/filter';
 import toast from 'react-hot-toast';
 
-
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -42,8 +41,8 @@ const Login = () => {
     }
 
   return (
-    <div className='flex justify-center items-center min-h-screen w-full bg-gradient-to-br from-slate-50 to-indigo-100'>
-      <div className='bg-white/90 backdrop-blur-sm p-10 rounded-2xl shadow-xl w-full max-w-md mx-4 transform transition duration-300 hover:shadow-2xl'>
+    <div className='flex justify-center items-center min-h-screen w-full bg-gradient-to-br from-slate-50 to-indigo-100 p-4'>
+      <div className='bg-white/90 backdrop-blur-sm p-10 rounded-2xl shadow-xl w-full max-w-md transform transition duration-300 hover:shadow-2xl'>
         {/* Header Section */}
         <div className='text-center mb-10'>
           <h1 className='text-4xl font-bold text-gray-800 mb-3'>Login</h1>

@@ -25,7 +25,6 @@ export const Navbar = () => {
     checkLoggedIn();
   })
 
-    
   return (
     <>
     <nav className='w-full h-20 bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg'>
