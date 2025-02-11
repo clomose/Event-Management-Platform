@@ -25,23 +25,17 @@ function App() {
       <Routes>
         <Route path="/" element={<Navbar />} >
         <Route index element={<Home />} />
-        {/* <Route path="/about" element={<About />} /> */}
-
-        </Route>
-
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/events/create" element={<CreateEventForm />} />
-        <Route path="/events" element={<HeroSection />} />
-        <Route path="/events/card" element={<EventCard />} />
+        <Route path="/events" element={<MainPage />} />
         <Route path="/events/:id" element={<EventPage />} />
-        <Route path="/events/filters" element={<EventFilters />} />
-        <Route path="/events/main" element={<MainPage />} />
+        <Route path="/events/create" element={<CreateEventForm />} />
         <Route path="/dashboard" element={<EventDashboard />} >
           <Route index element={<MyEvent />} />
           <Route path="/dashboard/registered-events" element={<RegisteredEvents />} />
         </Route>
         <Route path="/events/edit/:id" element={<EditEvent />} />
+        </Route>
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   )

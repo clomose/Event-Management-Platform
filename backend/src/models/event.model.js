@@ -36,6 +36,10 @@ const eventSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    slotLeft: {
+        type: Number,
+        default: 100,
+    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

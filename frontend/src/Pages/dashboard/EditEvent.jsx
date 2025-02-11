@@ -141,6 +141,14 @@ const EditEvent = () => {
                                     />
                                 </div>
 
+                                {/* Slot Limit Field */}
+                                <div>
+                                    <label htmlFor='slotLimit' className='block text-sm font-semibold text-gray-700 mb-2'>Slot Limit</label>
+                                    <input type='number' id='slotLimit' name='slotLimit' defaultValue={event.slotLimit}
+                                        className='w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 ease-in-out shadow-sm'
+                                    />
+                                </div>
+
                                 {/* Submit Button */}
                                 <div className='col-span-2'>
                                     <button type='submit'

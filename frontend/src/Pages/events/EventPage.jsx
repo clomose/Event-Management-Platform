@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Users, Eye, Calendar, CheckCircle,} from 'lucide-react'
+import {Users, Eye, Calendar, CheckCircle, Circle} from 'lucide-react'
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useSocket } from '../../context/SocketContext';
@@ -10,6 +10,7 @@ const EventPage = () => {
     const [event, setEvent] = useState(null);
     const [isRegistered, setIsRegistered] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [slotLeft, setSlotLeft] = useState(100);
 
     const handleRegister = async () => {
         console.log("Registering for event", id);
@@ -74,6 +75,19 @@ const EventPage = () => {
             socket.off('event-impression', handleEventImpression);
         };
     }, [socket, id]);
+
+    useEffect(() => {
+        if(!socket) return;
+        const handleEventSlotLeft = (data) => {
+            if(data.eventId === id){
+                setSlotLeft(data.slotLeft);
+            }
+        }
+        socket.on('event-slot-left', handleEventSlotLeft);
+        return () => {
+            socket.off('event-slot-left', handleEventSlotLeft);
+        }
+    }, [socket]);
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -148,7 +162,15 @@ const EventPage = () => {
                             <p className='font-bold text-2xl text-gray-900'>{event?.attendees}</p>
                         </div>
                     </div>
-                    
+
+                    <div className='flex items-center p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-300 group cursor-pointer'>
+                        <Circle className='w-10 h-10 text-blue-600 group-hover:scale-110 transition-transform'/>
+                        <div className='ml-6'>
+                            <h3 className='text-sm font-medium text-gray-500'>Registered</h3>
+                            <p className='font-bold text-2xl text-gray-900'>{slotLeft}</p>
+                        </div>
+                    </div>
+
                     <div className='flex items-center p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-300 group cursor-pointer'>
                         <Eye className='w-10 h-10 text-blue-600 group-hover:scale-110 transition-transform'/>
                         <div className='ml-6'>
@@ -163,6 +185,7 @@ const EventPage = () => {
                             <h3 className='text-sm font-medium text-gray-500'>Event Date</h3>
                             <p className='font-bold text-2xl text-gray-900'>{new Date(event?.date).toLocaleDateString()}</p>
                         </div>
+
                     </div>
                 </div>
             </div>

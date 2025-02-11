@@ -80,16 +80,18 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const logoutUser = asyncHandler(async(req,res) => {
     res.clearCookie("access_token");
+    console.log("logout");
     return res.status(200).json(
-        new ApiResponse(200, "User logged out successfully")
+        new ApiResponse(200,"User logged out successfully",{})
     )
 })
 
 const getCurrentUser = asyncHandler(async(req,res) => {
     return res.status(200).json(
-        new ApiResponse(200,req.user,"Current User Details")
+        new ApiResponse(200,"Current User Details",req.user)
     )
 })
+
 
 const registerUserToEvent = asyncHandler(async(req,res) => {
     const {id} = req.params;
@@ -110,7 +112,9 @@ const registerUserToEvent = asyncHandler(async(req,res) => {
     }
 
     const eventAttendees = await EventAttendees.create({eventId : id, userId});
-    const updatedEvent = await Event.findByIdAndUpdate(id, {$inc : {attendees : 1}}, {new : true});
+    const updatedEvent = await Event.findByIdAndUpdate(id, {
+        $inc : {attendees : 1, slotLeft : -1},
+        }, {new : true});
 
     if(!updatedEvent){
         throw new ApiError(500, "Failed to update event");
@@ -122,6 +126,7 @@ const registerUserToEvent = asyncHandler(async(req,res) => {
 
     const io = req.app.get('io');
     io.emit('event-registered', {eventId : id, totalAttendees : updatedEvent.attendees});
+    io.emit('event-slot-left', {eventId : id, slotLeft : updatedEvent.slotLeft});
 
     return res.status(200).json(
         new ApiResponse(200, "User registered to event successfully", eventAttendees)

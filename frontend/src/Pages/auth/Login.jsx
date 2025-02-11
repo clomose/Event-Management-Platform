@@ -3,12 +3,15 @@ import { Link, useNavigate } from 'react-router-dom'
 import { User, Mail, Lock } from 'lucide-react'
 import { useState} from 'react';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setIsLoggedIn, setUser } from '../../redux/slices/filter';
+
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-
+    const dispatch = useDispatch();
     const handleSubmit = async  (e) => {
         e.preventDefault();
         const response = await axios.post('http://localhost:8000/api/v1/user/login', {
@@ -17,10 +20,22 @@ const Login = () => {
         }, {withCredentials : true})
         if(response.status === 200){
             console.log(response.data);
+            dispatch(setIsLoggedIn(true));
+            dispatch(setUser(response.data));
             navigate('/');
         }else{
             alert('Login failed');
         }
+    }
+
+    const handleGuestAccess = () => {
+        dispatch(setIsLoggedIn(true));
+        dispatch(setUser({
+            name: 'Guest',
+            email: 'guest@example.com',
+            role: 'guest'
+        }));
+        navigate('/');
     }
 
   return (
@@ -84,6 +99,7 @@ const Login = () => {
         <div className='mt-6'>
           <button 
             className='w-full text-indigo-600 hover:text-indigo-800 font-medium transition-colors duration-300 hover:cursor-pointer flex items-center justify-center gap-2 bg-indigo-100 p-4 rounded-xl hover:bg-indigo-200'
+            onClick={handleGuestAccess}
           >
             <User className='w-5 h-5 mr-2' />
             Continue as a guest

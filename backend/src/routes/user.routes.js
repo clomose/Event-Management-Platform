@@ -10,7 +10,7 @@ router.get("/current-user", verifyUser, getCurrentUser);
 router.get("/registered-events", verifyUser, getRegisteredEvents);
 router.post("/register-to-event/:id", verifyUser, registerUserToEvent);
 router.get("/user-events", verifyUser, getUserEvents);
-router.get("/logout", verifyUser, logoutUser);
+router.get("/logout", logoutUser);
 
 export {router};
 

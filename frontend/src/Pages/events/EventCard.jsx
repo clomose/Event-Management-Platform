@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Calendar, MapPin, User,Clock } from 'lucide-react'
+import { Calendar, MapPin, User,Clock, Circle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSocket } from '../../context/SocketContext';
 
 export const EventCard = ({event}) => {
 
+  const socket = useSocket();
   const navigate = useNavigate();
   const [isRegistered, setIsRegistered] = useState(false);
+  const [slotLeft, setSlotLeft] = useState(event.slotLeft);
   useEffect(() => {
     const fetchIsRegistered = async () => {
       const response = await axios.get(`http://localhost:8000/api/v1/event/event/is-registered/${event._id}`, {withCredentials : true});
@@ -14,6 +17,22 @@ export const EventCard = ({event}) => {
     }
     fetchIsRegistered();
   }, [event._id]);
+
+  useEffect(() => {
+    if(!socket){
+      return;
+    }
+
+    const handleEventSlotLeft = (data) => {
+      if(data.eventId === event._id){
+        setSlotLeft(data.slotLeft);
+      }
+    }
+    socket.on('event-slot-left', handleEventSlotLeft);
+    return () => {
+      socket.off('event-slot-left', handleEventSlotLeft);
+    }
+  }, [socket]);
 
   return (
     <div 
@@ -53,10 +72,17 @@ export const EventCard = ({event}) => {
             <Clock className='w-5 h-5 mr-3' />
             <span className='font-medium'>{event.time}</span>
           </div>
-          <div className='flex items-center text-gray-700 text-sm hover:text-blue-600 transition-colors duration-200'>
-            <User className='w-5 h-5 mr-3' />
-            <p className='font-medium'>{event.attendees} Attendees</p>
+          <div className='flex justify-between items-center space-x-2'>
+            <div className='flex items-center text-gray-700 text-sm hover:text-blue-600 transition-colors duration-200'>
+                <User className='w-5 h-5 mr-3' />
+                <p className='font-medium'>{event.attendees} Attendees</p>
+            </div>
+            <div className='flex items-center text-gray-700 text-sm hover:text-blue-600 transition-colors duration-200'>
+                <Circle className='w-5 h-5 mr-3' />
+                <p className='font-medium'>{slotLeft} Slots Left</p>
+            </div>
           </div>
+          
         </div>
 
         <div className='flex justify-between items-center pt-2'>

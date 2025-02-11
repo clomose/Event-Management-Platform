@@ -1,7 +1,21 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
-import { Outlet } from 'react-router-dom'
+import { Outlet , useNavigate} from 'react-router-dom'
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+
 export const Navbar = () => {
+    const navigate = useNavigate();
+    const {isLoggedIn, user} = useSelector(state => state.filter);
+    const handleLogout = async () => {
+      console.log("Logging out")
+      const response = await axios.get("http://localhost:8000/api/v1/user/logout");
+      console.log("logout",response);
+      if(response.status === 200){
+          navigate("/login");
+      }
+  }
+    
   return (
     <>
     <nav className='w-full h-20 bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg'>
@@ -15,19 +29,20 @@ export const Navbar = () => {
         <div className='flex items-center space-x-8'>
           <Link to="/" className='text-white hover:text-purple-200 transition-all duration-300 font-medium text-lg'>Home</Link>
           <Link to="/events" className='text-white hover:text-purple-200 transition-all duration-300 font-medium text-lg'>Events</Link>
-          <Link to="/about" className='text-white hover:text-purple-200 transition-all duration-300 font-medium text-lg'>About</Link>
-          <Link to="/dashboard" className='text-white hover:text-purple-200 transition-all duration-300 font-medium text-lg'>Dashboard</Link>
+          {isLoggedIn ? <Link to="/dashboard" className='text-white hover:text-purple-200 transition-all duration-300 font-medium text-lg'>Dashboard</Link> : null}
         </div>
 
         <div className='flex items-center'>
-          <Link 
+          <div
             to="/events/create" 
             className='bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold 
               hover:bg-purple-100 hover:transform hover:scale-105 
               transition-all duration-300 shadow-md'
           >
-            Create Event
-          </Link>
+            {isLoggedIn ? (<div className='flex items-center space-x-2'>
+              <button className='' onClick={handleLogout}>LogOut</button>
+            </div>) : <Link to="/login">Login</Link>}
+          </div>
         </div>
       </div>
     </nav>
