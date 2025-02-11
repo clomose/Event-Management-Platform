@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import { Outlet , useNavigate} from 'react-router-dom'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 
 export const Navbar = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const {isLoggedIn, user} = useSelector(state => state.filter);
     const handleLogout = async () => {
@@ -15,6 +16,17 @@ export const Navbar = () => {
           navigate("/login");
       }
   }
+
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      const response = await axios.get("http://localhost:8000/api/v1/user/current-user");
+      if(response.status === 200){
+        dispatch(setIsLoggedIn(true));
+        dispatch(setUser(response.data.data));
+      }
+    }
+    checkLoggedIn();
+  }, [])
     
   return (
     <>

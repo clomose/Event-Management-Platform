@@ -166,7 +166,7 @@ const EventPage = () => {
                     <div className='flex items-center p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-300 group cursor-pointer'>
                         <Circle className='w-10 h-10 text-blue-600 group-hover:scale-110 transition-transform'/>
                         <div className='ml-6'>
-                            <h3 className='text-sm font-medium text-gray-500'>Registered</h3>
+                            <h3 className='text-sm font-medium text-gray-500'>Slot Left</h3>
                             <p className='font-bold text-2xl text-gray-900'>{slotLeft}</p>
                         </div>
                     </div>
