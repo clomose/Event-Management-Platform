@@ -49,6 +49,14 @@ const EventPage = () => {
     }, [socket]);
 
     useEffect(() => {
+        const fetchIsRegistered = async () => {
+            const response = await axios.get(`http://localhost:8000/api/v1/event/event/is-registered/${id}`, {withCredentials : true});
+            setIsRegistered(response.data.data);
+        }
+        fetchIsRegistered();
+    }, [id]);
+
+    useEffect(() => {
         if (!socket) return;
 
         const handleEventImpression = (data) => {
@@ -109,7 +117,7 @@ const EventPage = () => {
                                 ? 'bg-green-600 hover:bg-green-700' 
                                 : 'bg-blue-600 hover:bg-blue-700'
                         } text-white px-10 py-4 rounded-xl transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-2 text-lg`} 
-                        onClick={handleRegister}
+                        onClick={isRegistered ? () => {} : handleRegister}
                     >
                         <span>{isLoading ? "Registering..." : isRegistered ? "Registered" : "Register Now"}</span>
                         {isRegistered && <CheckCircle className='w-5 h-5 text-white ml-2'/>}

@@ -8,7 +8,8 @@ import { createEvent,
     getEventsByUser, 
     filterEvents,
     registeredUsers,
-    incrementImpressions
+    incrementImpressions,
+    isRegistered
 } from "../controllers/event.controller.js";
 import { verifyUser } from "../middleware/auth.middleware.js";
 import { upload } from "../middleware/multer.middleware.js";
@@ -25,4 +26,5 @@ router.get("/events",getEvents);
 router.post("/events/filter", verifyUser, filterEvents);
 router.get("/event/registered-users/:id", verifyUser, registeredUsers);
 router.post("/increment-impression/:id", verifyUser, incrementImpressions);
+router.get("/event/is-registered/:id", verifyUser, isRegistered);
 export {router};

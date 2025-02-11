@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Calendar, MapPin, User,Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -6,6 +6,14 @@ import axios from 'axios';
 export const EventCard = ({event}) => {
 
   const navigate = useNavigate();
+  const [isRegistered, setIsRegistered] = useState(false);
+  useEffect(() => {
+    const fetchIsRegistered = async () => {
+      const response = await axios.get(`http://localhost:8000/api/v1/event/event/is-registered/${event._id}`, {withCredentials : true});
+      setIsRegistered(response.data.data);
+    }
+    fetchIsRegistered();
+  }, [event._id]);
 
   return (
     <div 
@@ -56,13 +64,22 @@ export const EventCard = ({event}) => {
             By {event.createdBy.name}
           </p>
           <button 
-            className='bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors duration-300 text-sm font-semibold shadow-md hover:shadow-lg'
+            className={`${
+              isRegistered 
+                ? 'bg-green-600 hover:bg-green-700' 
+                : 'bg-blue-600 hover:bg-blue-700'
+            } text-white py-2 px-6 rounded-lg transition-colors duration-300 text-sm font-semibold shadow-md hover:shadow-lg`}
             onClick={(e) => {
               e.stopPropagation();
-              // Add registration logic here
+              if(isRegistered){
+                navigate(`/events/${event._id}`);
+              }
+              else{
+                navigate(`/events/${event._id}`);
+              }
             }}
           >
-            Register Now
+            {isRegistered ? "Registered" : "Register Now"}
           </button>
         </div>
       </div>

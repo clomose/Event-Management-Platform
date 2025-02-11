@@ -213,6 +213,17 @@ const incrementImpressions = asyncHandler(async(req,res) => {
     return res.status(200).json(new ApiResponse(200, "Impressions incremented successfully", event));
 })
 
+const isRegistered = asyncHandler(async(req,res) => {
+    const {id} = req.params;
+    const userId = req.user._id;
+    let response = true;
+    const event = await EventAttendees.findOne({eventId : id, userId : userId});
+    if(!event){
+        response = false;
+    }
+    return res.status(200).json(new ApiResponse(200, "Event registered successfully", response));
+})
+
 export {createEvent, 
     getEvents, 
     getEventById,
@@ -222,5 +233,6 @@ export {createEvent,
     getEventsByUser, 
     filterEvents,
     registeredUsers,
-    incrementImpressions
+    incrementImpressions,
+    isRegistered
 };
