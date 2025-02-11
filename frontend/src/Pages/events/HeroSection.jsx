@@ -11,14 +11,7 @@ const HeroSection = () => {
         <p className='text-xl md:text-2xl font-semibold text-gray-600 mb-8'>
           Join the fun and make memories!
         </p>
-        
-        {/* CTA Buttons */}
-        <div className='flex flex-col sm:flex-row gap-4 justify-center mt-8'>
-          
-          <button className='px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg border-2 border-blue-600 hover:bg-blue-50 transition-colors'>
-            Create Event
-          </button>
-        </div>
+
 
         {/* Features Section */}
         <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mt-16'>

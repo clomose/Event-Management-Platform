@@ -78,6 +78,13 @@ const loginUser = asyncHandler(async (req, res) => {
 
 });
 
+const logoutUser = asyncHandler(async(req,res) => {
+    res.clearCookie("access_token");
+    return res.status(200).json(
+        new ApiResponse(200, "User logged out successfully")
+    )
+})
+
 const getCurrentUser = asyncHandler(async(req,res) => {
     return res.status(200).json(
         new ApiResponse(200,req.user,"Current User Details")
@@ -112,6 +119,9 @@ const registerUserToEvent = asyncHandler(async(req,res) => {
     if(!eventAttendees){
         throw new ApiError(500, "Failed to register user to event");
     }
+
+    const io = req.app.get('io');
+    io.emit('event-registered', {eventId : id, totalAttendees : updatedEvent.attendees});
 
     return res.status(200).json(
         new ApiResponse(200, "User registered to event successfully", eventAttendees)
@@ -195,5 +205,6 @@ export {registerUser,
     getCurrentUser, 
     registerUserToEvent, 
     getRegisteredEvents, 
-    getUserEvents
+    getUserEvents,
+    logoutUser
 };

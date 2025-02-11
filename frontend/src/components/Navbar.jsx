@@ -1,7 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 export const Navbar = () => {
   return (
+    <>
     <nav className='w-full h-20 bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg'>
       <div className='container mx-auto h-full flex items-center justify-between px-6'>
         <div className='flex items-center'>
@@ -29,6 +31,8 @@ export const Navbar = () => {
         </div>
       </div>
     </nav>
+    <Outlet />
+    </>
   )
 }
 

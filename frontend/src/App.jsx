@@ -14,28 +14,33 @@ import EventPage from './Pages/events/EventPage'
 import EventFilters from './Pages/events/EventFilters'
 import MainPage from './Pages/events/MainPage'
 import EventDashboard from './Pages/dashboard/EventDashboard'
-import DashBoardSidebar from './Pages/dashboard/DashBoardSidebar'
 import MyEvent from './Pages/dashboard/MyEvent'
 import RegisteredEvents from './Pages/dashboard/RegisteredEvents'
 import EditEvent from './Pages/dashboard/EditEvent'
+import Home from './Pages/home/home'
 function App() {
 
   return (
     <>
       <Routes>
+        <Route path="/" element={<Navbar />} >
+        <Route index element={<Home />} />
+        {/* <Route path="/about" element={<About />} /> */}
+
+        </Route>
+
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/events/create" element={<CreateEventForm />} />
-        <Route path="/" element={<Navbar />} />
         <Route path="/events" element={<HeroSection />} />
         <Route path="/events/card" element={<EventCard />} />
         <Route path="/events/:id" element={<EventPage />} />
         <Route path="/events/filters" element={<EventFilters />} />
         <Route path="/events/main" element={<MainPage />} />
-        <Route path="/dashboard" element={<EventDashboard />} />
-        <Route path="/dashboard/sidebar" element={<DashBoardSidebar />} />
-        <Route path="/dashboard/my-events" element={<MyEvent />} />
-        <Route path="/dashboard/registered-events" element={<RegisteredEvents />} />
+        <Route path="/dashboard" element={<EventDashboard />} >
+          <Route index element={<MyEvent />} />
+          <Route path="/dashboard/registered-events" element={<RegisteredEvents />} />
+        </Route>
         <Route path="/events/edit/:id" element={<EditEvent />} />
       </Routes>
     </>

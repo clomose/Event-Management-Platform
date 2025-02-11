@@ -34,71 +34,105 @@ const EventFilters = () => {
 
   }
   return (
-    <div className='flex flex-col w-full h-auto bg-white rounded-xl p-6 space-y-8 border border-gray-100 shadow-lg sticky top-0'>
-        <div className='w-full h-auto space-y-2'>
-            <div className='flex items-center gap-2'>
-                <Search className='w-5 h-5 text-blue-600' />
-                <label htmlFor="search" className='text-lg font-bold text-gray-900'>Search Events</label>
-            </div>
-            <input type="text" placeholder='Search Events' className='w-full h-auto p-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all' onChange={(e) => setSearch(e.target.value)} />
+    <div className='flex flex-col w-full h-auto bg-white rounded-xl p-6 space-y-6 border border-gray-200 shadow-sm sticky top-4'>
+      {/* Search Section */}
+      <div className='w-full h-auto space-y-2'>
+        <div className='flex items-center gap-2'>
+          <Search className='w-4 h-4 text-gray-500' />
+          <label htmlFor="search" className='text-base font-semibold text-gray-700'>Search Events</label>
         </div>
-        {/* Event Type Section */}
-        <div className='flex flex-col w-full space-y-4'>
+        <div className='relative'>
+          <input 
+            type="text" 
+            value={search}
+            placeholder='Search by event name...' 
+            className='w-full h-10 pl-4 pr-10 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all text-sm' 
+            onChange={(e) => setSearch(e.target.value)} 
+          />
+          {search && (
+            <button 
+              onClick={() => setSearch('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              ×
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Event Type Section */}
+      <div className='flex flex-col w-full space-y-3'>
         <div className="flex items-center gap-2">
-          <Tag className="w-4 h-4 text-blue-600" />
-          <h2 className='text-lg font-bold text-gray-900'>Event Type</h2>
+          <Tag className="w-4 h-4 text-gray-500" />
+          <h2 className='text-base font-semibold text-gray-700'>Event Type</h2>
         </div>
-        <div className='space-y-2 grid grid-cols-2 gap-2'>
+        <div className='grid grid-cols-2 gap-2'>
           {eventTypes.map((type) => (
-            <label key={type} className='flex items-center space-x-3 cursor-pointer group' >
-              <div className="relative flex items-center">
-                <input
-                  type="checkbox"
-                  className='w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
-                  onChange={(e) => setEventType(e.target.checked ? type : '')}
-                  checked={eventType === type}
-                />
-                <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity absolute -right-4" />
-              </div>
-              <span className='text-gray-700 capitalize text-sm group-hover:text-blue-600 transition-colors'>{type}</span>
+            <label 
+              key={type} 
+              className={`flex items-center p-2 rounded-lg cursor-pointer transition-all ${
+                eventType === type 
+                  ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                  : 'hover:bg-gray-50 border-transparent'
+              } border`}
+            >
+              <input
+                type="checkbox"
+                className='w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
+                onChange={(e) => setEventType(e.target.checked ? type : '')}
+                checked={eventType === type}
+              />
+              <span className='ml-2 text-sm capitalize'>{type}</span>
             </label>
           ))}
         </div>
       </div>
 
       {/* Time Filter Section */}
-      <div className='flex flex-col w-full space-y-4'>
+      <div className='flex flex-col w-full space-y-3'>
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-blue-600" />
-          <h2 className='text-lg font-bold text-gray-900'>Time</h2>
+          <Calendar className="w-4 h-4 text-gray-500" />
+          <h2 className='text-base font-semibold text-gray-700'>Time</h2>
         </div>
-        <div className='space-y-2'>
-            <div className='flex items-center gap-2'>
-            {timeFilters.map((filter) => (
-            <label key={filter} className='flex items-center space-x-3 cursor-pointer group'>
-              <div className="relative flex items-center">
-                <input
-                  type="radio"
-                  name="timeFilter"
-                  className='w-5 h-5 border-gray-300 text-blue-600 focus:ring-blue-500'
-                  onChange={(e) => setTimeFilter(e.target.checked ? filter : '')}
-                  checked={timeFilter === filter}
-                />
-                <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity absolute -right-4" />
-              </div>
-              <span className='text-gray-700 capitalize text-sm group-hover:text-blue-600 transition-colors'>{filter}</span>
+        <div className='flex gap-2'>
+          {timeFilters.map((filter) => (
+            <label 
+              key={filter} 
+              className={`flex flex-1 items-center p-2 rounded-lg cursor-pointer transition-all ${
+                timeFilter === filter 
+                  ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                  : 'hover:bg-gray-50 border-transparent'
+              } border`}
+            >
+              <input
+                type="radio"
+                name="timeFilter"
+                className='w-4 h-4 border-gray-300 text-blue-600 focus:ring-blue-500'
+                onChange={(e) => setTimeFilter(e.target.checked ? filter : '')}
+                checked={timeFilter === filter}
+              />
+              <span className='ml-2 text-sm capitalize'>{filter}</span>
             </label>
           ))}
-          </div>
         </div>
       </div>
 
-
-      {/* Apply Filters Button */}
-      <button className='w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all transform hover:translate-y-[-1px] active:translate-y-[1px] font-medium shadow-md hover:shadow-lg' onClick={handleApplyFilters}>
-        Apply Filters
-      </button>
-      <button className='w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all transform hover:translate-y-[-1px] active:translate-y-[1px] font-medium shadow-md hover:shadow-lg' onClick={handleClearFilters}>Clear Filters</button>
+      {/* Buttons Section */}
+      <div className='flex flex-col gap-2 pt-2'>
+        <button 
+          className='w-full bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed' 
+          onClick={handleApplyFilters}
+          disabled={!search && !eventType && !timeFilter}
+        >
+          Apply Filters
+        </button>
+        <button 
+          className='w-full bg-gray-50 text-gray-700 py-2.5 rounded-lg hover:bg-gray-100 transition-all font-medium text-sm border border-gray-200' 
+          onClick={handleClearFilters}
+        >
+          Clear Filters
+        </button>
+      </div>
     </div>
   )
 }

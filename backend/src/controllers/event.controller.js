@@ -7,7 +7,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const createEvent = asyncHandler(async(req,res) => {
     console.log(req.body);
-    const {title, description, category, date, time} = req.body;
+    const {title, description, category, date, time, shortDescription} = req.body;
     const userId = req.user._id;
     if(!userId){
         throw new ApiError(400, "User not found");
@@ -21,7 +21,7 @@ const createEvent = asyncHandler(async(req,res) => {
 
     const eventImage = await uploadOnCloudinary(imageUrl);
 
-    const event = await Event.create({title, description, category, date, time, image: eventImage.secure_url, createdBy : userId});
+    const event = await Event.create({title, description, category, date, time, shortDescription, image: eventImage.secure_url, createdBy : userId});
 
     if(!event){
         throw new ApiError(400, "Event not created");
@@ -47,7 +47,6 @@ const getEvents = asyncHandler(async (req, res) => {
         new ApiResponse(200, "Events fetched successfully", events)
     );
 });
-
 
 const getEventById = asyncHandler(async(req,res) => {
     const {id} = req.params;
@@ -209,6 +208,8 @@ const incrementImpressions = asyncHandler(async(req,res) => {
     if(!event){
         throw new ApiError(400, "Event not found");
     }
+    const io = req.app.get('io');
+    io.emit('event-impression', {eventId : id, totalImpressions : event.impressions});
     return res.status(200).json(new ApiResponse(200, "Impressions incremented successfully", event));
 })
 

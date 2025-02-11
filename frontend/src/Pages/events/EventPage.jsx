@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react'
 import {Users, Eye, Calendar, CheckCircle,} from 'lucide-react'
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useSocket } from '../../context/SocketContext';
 
 const EventPage = () => {
+    const socket = useSocket();
     const {id} = useParams();
-    const navigate = useNavigate();
     const [event, setEvent] = useState(null);
     const [isRegistered, setIsRegistered] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -25,10 +26,46 @@ const EventPage = () => {
             await axios.post(`http://localhost:8000/api/v1/event/increment-impression/${id}`, {}, 
                 {withCredentials: true}
             );
+
         } catch (error) {
             console.error("Error incrementing impressions:", error);
         }
     };
+
+    useEffect(() => {
+        if(!socket) return;
+        const handleEventRegistered = (data) => {
+            if(data.eventId === id){
+                setEvent(prevEvent => ({
+                    ...prevEvent,
+                    attendees : data.totalAttendees
+                }));
+            }
+        }
+        socket.on('event-registered', handleEventRegistered);
+        return () => {
+            socket.off('event-registered', handleEventRegistered);
+        }
+    }, [socket]);
+
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleEventImpression = (data) => {
+            if (data.eventId === id) {
+                setEvent(prevEvent => ({
+                    ...prevEvent,
+                    impressions: data.totalImpressions
+                }));
+            }
+        };
+
+        socket.on('event-impression', handleEventImpression);
+
+        return () => {
+            socket.off('event-impression', handleEventImpression);
+        };
+    }, [socket, id]);
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -38,73 +75,85 @@ const EventPage = () => {
         }
         fetchEvent();
         incrementImpressions();
-        
-    }, [])
+    }, [id])
   return (
-    <div className='flex flex-col items-center min-h-screen bg-gray-50 py-10 w-full space-y-8'>
-        <div className='w-[80%] h-96 rounded-xl overflow-hidden shadow-lg'>
-            <img src="https://images.unsplash.com/photo-1738467990752-6e00e436919d?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+    <div className='flex flex-col items-center min-h-screen bg-gradient-to-b from-gray-50 to-white py-16 w-full space-y-12'>
+        <div className='w-[85%] max-w-7xl h-[500px] rounded-2xl overflow-hidden shadow-2xl transform hover:-translate-y-1 transition-all duration-500'>
+            <img src={event?.image} 
                  alt="event" 
-                 className='w-full h-full object-cover hover:scale-105 transition-transform duration-500 hover:cursor-pointer' />
+                 className='w-full h-full object-cover hover:scale-105 transition-all duration-700 hover:cursor-pointer' />
         </div>
-        <div className='flex justify-center w-[80%] h-full p-6 bg-white rounded-xl shadow-lg space-x-8'>
-            <div className='flex flex-col items-start justify-start w-[60%] h-full p-8 space-y-8'>
-                <div className='space-y-3'>
+        <div className='flex justify-center w-[85%] max-w-7xl h-full p-8 bg-white rounded-2xl shadow-xl space-x-12 hover:shadow-2xl transition-all duration-300'>
+            <div className='flex flex-col items-start justify-start w-[60%] h-full p-8 space-y-10'>
+                <div className='space-y-4'>
                     <div className='flex items-center justify-between w-full'>
-                        <h1 className='text-4xl font-bold text-gray-900'>{event?.title}</h1>
+                        <h1 className='text-5xl font-bold text-gray-900 leading-tight'>{event?.title}</h1>
                     </div>
-                    <p className='text-lg text-gray-600 flex items-center'>
+                    <p className='text-xl text-gray-600 flex items-center'>
                         <span className='mr-2'>Hosted by</span>
-                        <span className='font-semibold text-blue-600'>{event?.createdBy?.name}</span>
+                        <span className='font-semibold text-blue-600 hover:text-blue-700 cursor-pointer transition-colors'>{event?.createdBy?.name}</span>
                     </p>
                 </div>
 
-                <div className='space-y-4'>
-                    <h2 className='text-2xl font-semibold text-gray-800'>About this event</h2>
-                    <p className='text-gray-600 leading-relaxed text-lg'>
+                <div className='space-y-6'>
+                    <h2 className='text-3xl font-semibold text-gray-800'>About this event</h2>
+                    <p className='text-gray-600 leading-relaxed text-xl'>
                         {event?.description}
                     </p>
                 </div>
 
-                <div className='pt-6'>
-                    <button className='bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5' onClick={handleRegister}>
-                        {isLoading ? "Registering..." : "Register Now"}
-                        {isRegistered && <CheckCircle className='w-4 h-4 text-green-500 ml-2'/>}
+                <div className='pt-8'>
+                    <button 
+                        className={`${
+                            isRegistered 
+                                ? 'bg-green-600 hover:bg-green-700' 
+                                : 'bg-blue-600 hover:bg-blue-700'
+                        } text-white px-10 py-4 rounded-xl transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-2 text-lg`} 
+                        onClick={handleRegister}
+                    >
+                        <span>{isLoading ? "Registering..." : isRegistered ? "Registered" : "Register Now"}</span>
+                        {isRegistered && <CheckCircle className='w-5 h-5 text-white ml-2'/>}
                     </button>
                 </div>
             </div>
             
-            <div className='flex flex-col w-[40%] h-fit bg-white rounded-xl p-6 space-y-6 border border-gray-100'>
-                <div className='flex flex-col space-y-3'>
+            <div className='flex flex-col w-[40%] h-fit bg-white rounded-xl p-8 space-y-8 border border-gray-200 hover:border-blue-200 transition-all duration-300 shadow-lg'>
+                <div className='flex flex-col space-y-4'>
                     <div className='flex items-center justify-between'>
-                        <h2 className='text-2xl font-bold text-gray-900'>Event Details</h2>
-                        <span className='px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold'>{new Date(event?.date) > new Date() ? "Upcoming" : "Past"}</span>
+                        <h2 className='text-3xl font-bold text-gray-900'>Event Details</h2>
+                        <span className={`px-5 py-2 ${
+                            new Date(event?.date) > new Date() 
+                                ? 'bg-blue-100 text-blue-700' 
+                                : 'bg-gray-100 text-gray-700'
+                        } rounded-full text-sm font-semibold`}>
+                            {new Date(event?.date) > new Date() ? "Upcoming" : "Past"}
+                        </span>
                     </div>
-                    <div className='px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold w-fit'>{event?.category}</div>
+                    <div className='px-5 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold w-fit'>{event?.category}</div>
                 </div>
                 
-                <div className='space-y-4'>
-                    <div className='flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'>
-                        <Users className='w-8 h-8 text-blue-600'/>
-                        <div className='ml-4'>
-                            <h3 className='text-sm text-gray-500'>Registered</h3>
-                            <p className='font-bold text-xl text-gray-900'>{event?.attendees}</p>
+                <div className='space-y-6'>
+                    <div className='flex items-center p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-300 group cursor-pointer'>
+                        <Users className='w-10 h-10 text-blue-600 group-hover:scale-110 transition-transform'/>
+                        <div className='ml-6'>
+                            <h3 className='text-sm font-medium text-gray-500'>Registered</h3>
+                            <p className='font-bold text-2xl text-gray-900'>{event?.attendees}</p>
                         </div>
                     </div>
                     
-                    <div className='flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'>
-                        <Eye className='w-8 h-8 text-blue-600'/>
-                        <div className='ml-4'>
-                            <h3 className='text-sm text-gray-500'>Impressions</h3>
-                            <p className='font-bold text-xl text-gray-900'>{event?.impressions}</p>
+                    <div className='flex items-center p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-300 group cursor-pointer'>
+                        <Eye className='w-10 h-10 text-blue-600 group-hover:scale-110 transition-transform'/>
+                        <div className='ml-6'>
+                            <h3 className='text-sm font-medium text-gray-500'>Impressions</h3>
+                            <p className='font-bold text-2xl text-gray-900'>{event?.impressions}</p>
                         </div>
                     </div>
                     
-                    <div className='flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'>
-                        <Calendar className='w-8 h-8 text-blue-600'/>
-                        <div className='ml-4'>
-                            <h3 className='text-sm text-gray-500'>Event Date</h3>
-                            <p className='font-bold text-xl text-gray-900'>{new Date(event?.date).toLocaleDateString()}</p>
+                    <div className='flex items-center p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-300 group cursor-pointer'>
+                        <Calendar className='w-10 h-10 text-blue-600 group-hover:scale-110 transition-transform'/>
+                        <div className='ml-6'>
+                            <h3 className='text-sm font-medium text-gray-500'>Event Date</h3>
+                            <p className='font-bold text-2xl text-gray-900'>{new Date(event?.date).toLocaleDateString()}</p>
                         </div>
                     </div>
                 </div>
